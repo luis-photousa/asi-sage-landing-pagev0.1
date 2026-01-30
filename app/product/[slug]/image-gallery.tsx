@@ -45,33 +45,33 @@ export function ImageGallery({
 
   // Compute which images to display based on selected variant
   const displayImages = useMemo(() => {
-    // Find selected variant based on URL params
-    const selectedVariant = variants.find((v) =>
-      v.combinations.every(
-        (c) =>
-          searchParams.get(c.variantValue.variantType.label) ===
-          c.variantValue.value
-      )
-    );
-
-    // If variant selected and has images, show those
-    if (selectedVariant?.images.length) {
-      return selectedVariant.images;
+    const variantId = searchParams.get("variant");
+    if (variantId) {
+      const byId = variants.find((v) => v.id === variantId);
+      if (byId?.images.length) return byId.images;
     }
-
-    // Fallback to all images
+    const selectedVariant = variants.find(
+      (v) =>
+        v.combinations.length > 0 &&
+        v.combinations.every(
+          (c) =>
+            searchParams.get(c.variantValue.variantType.label) ===
+            c.variantValue.value,
+        ),
+    );
+    if (selectedVariant?.images.length) return selectedVariant.images;
     return images;
   }, [variants, searchParams, images]);
 
   const handlePrevious = () => {
     setSelectedIndex((prev) =>
-      prev === 0 ? displayImages.length - 1 : prev - 1
+      prev === 0 ? displayImages.length - 1 : prev - 1,
     );
   };
 
   const handleNext = () => {
     setSelectedIndex((prev) =>
-      prev === displayImages.length - 1 ? 0 : prev + 1
+      prev === displayImages.length - 1 ? 0 : prev + 1,
     );
   };
 
@@ -96,7 +96,7 @@ export function ImageGallery({
           sizes="(max-width: 768px) 100vw, 500px"
           className={cn(
             "object-cover transition-transform duration-500",
-            isZoomed && "scale-150 cursor-zoom-out"
+            isZoomed && "scale-150 cursor-zoom-out",
           )}
           onClick={() => setIsZoomed(!isZoomed)}
           priority
@@ -158,7 +158,7 @@ export function ImageGallery({
                 "relative aspect-square w-20 shrink-0 overflow-hidden rounded-lg transition-all duration-200",
                 selectedIndex === index
                   ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
-                  : "opacity-60 hover:opacity-100"
+                  : "opacity-60 hover:opacity-100",
               )}
             >
               <Image

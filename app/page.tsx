@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { FeaturedCategories } from "@/components/sections/featured-categories";
 import { Hero } from "@/components/sections/hero";
 import { ProductGrid } from "@/components/sections/product-grid";
 import { getProductsFromPricelist } from "@/lib/pricelist";
@@ -33,9 +34,10 @@ export default async function Home() {
   return (
     <main>
       <Hero />
+      <FeaturedCategories />
       <Suspense fallback={<ProductGridSkeleton />}>
         <ProductGrid
-          title="Featured Products"
+          title="Featured products"
           description="Handpicked favorites from our collection"
           limit={8}
           products={
@@ -43,6 +45,8 @@ export default async function Home() {
           }
           showViewAll
           viewAllHref="/products"
+          vendorLabel="Your Brand"
+          showUnitPriceStyle
         />
       </Suspense>
     </main>

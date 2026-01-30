@@ -2,10 +2,10 @@ import "@/app/globals.css";
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Phone } from "lucide-react";
 import { Suspense } from "react";
 import { Footer } from "@/app/footer";
 import { Navbar } from "@/app/navbar";
-import { ReferralBadge } from "@/components/referral-badge";
 import { YnsLink } from "@/components/yns-link";
 
 const geistSans = Geist({
@@ -44,16 +44,21 @@ export default function RootLayout({
                       href="/"
                       className="text-xl font-bold"
                     >
-                      Your Next Store
+                      Imprints Photomugs
                     </YnsLink>
                     <Navbar />
+                  </div>
+                  <div className="flex items-center gap-2 bg-secondary/50 rounded-lg px-4 py-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Call us 000-000-0000
+                    </p>
                   </div>
                 </div>
               </div>
             </header>
             <div className="flex-1">{children}</div>
             <Footer />
-            <ReferralBadge />
           </div>
         </Suspense>
       </body>

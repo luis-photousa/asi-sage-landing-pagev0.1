@@ -14,6 +14,10 @@ type ProductGridProps = {
   limit?: number;
   showViewAll?: boolean;
   viewAllHref?: string;
+  /** Optional vendor/brand line on each card (e.g. "ORCA Coatings") */
+  vendorLabel?: string;
+  /** Show Photo USA–style pricing (unit cost + Unit price / per) */
+  showUnitPriceStyle?: boolean;
 };
 
 export async function ProductGrid({
@@ -23,6 +27,8 @@ export async function ProductGrid({
   limit = 6,
   showViewAll = true,
   viewAllHref = "/products",
+  vendorLabel,
+  showUnitPriceStyle = false,
 }: ProductGridProps) {
   "use cache";
   cacheLife("minutes");
@@ -125,13 +131,29 @@ export async function ProductGrid({
                   />
                 )}
               </div>
-              <div className="space-y-1">
-                <h3 className="text-base font-medium text-foreground">
+              <div className="space-y-2">
+                {vendorLabel && (
+                  <p className="text-xs text-muted-foreground">
+                    Vendor: {vendorLabel}
+                  </p>
+                )}
+                <h3 className="text-base font-medium text-foreground leading-snug">
                   {product.name}
                 </h3>
-                <p className="text-base font-semibold text-foreground">
-                  {priceDisplay}
-                </p>
+                {showUnitPriceStyle && priceDisplay ? (
+                  <div className="space-y-0.5 text-sm">
+                    <p className="font-semibold text-foreground">
+                      {priceDisplay}
+                      <span className="ml-1 font-normal text-muted-foreground">
+                        /unit cost
+                      </span>
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-base font-semibold text-foreground">
+                    {priceDisplay}
+                  </p>
+                )}
               </div>
             </YnsLink>
           );
