@@ -19,7 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SiteBreadcrumbs } from "@/components/breadcrumbs";
-import { getMockProductBySlug } from "@/lib/mock-data";
 import { getProductBySlugFromPricelist } from "@/lib/pricelist";
 import { CURRENCY, LOCALE } from "@/lib/constants";
 import { formatMoney } from "@/lib/money";
@@ -45,8 +44,7 @@ const ProductDetailsContent = async ({
   "use cache";
   cacheLife("minutes");
 
-  const product =
-    (await getProductBySlugFromPricelist(slug)) ?? getMockProductBySlug(slug);
+  const product = await getProductBySlugFromPricelist(slug);
 
   if (!product) {
     notFound();
@@ -99,17 +97,27 @@ const ProductDetailsContent = async ({
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-6 sm:py-8">
         <SiteBreadcrumbs
           items={[
             { label: "Home", href: "/" },
-            { label: "Products", href: "/products" },
-            { label: product.name },
+            ...(product.collectionName && product.collectionSlug
+              ? [
+                  {
+                    label: product.collectionName,
+                    href: `/collection/${product.collectionSlug}`,
+                  },
+                  { label: product.name },
+                ]
+              : [
+                  { label: "Products", href: "/products" },
+                  { label: product.name },
+                ]),
           ]}
         />
       </div>
-      <div className="lg:grid lg:grid-cols-2 lg:gap-16">
+      <div className="border-t border-border pt-8 lg:pt-10 lg:grid lg:grid-cols-2 lg:gap-16">
         {/* Left: Image Gallery (sticky on desktop) */}
         <ImageGallery
           images={allImages}
@@ -127,8 +135,16 @@ const ProductDetailsContent = async ({
             <p className="text-2xl font-semibold tracking-tight">
               {priceDisplay}
             </p>
+            {selectedVariant?.sku && (
+              <p className="text-sm text-muted-foreground">
+                SKU: {selectedVariant.sku}
+              </p>
+            )}
             <p className="text-sm text-muted-foreground">In stock</p>
-            <VariantColorSwatches variants={product.variants} />
+            <VariantColorSwatches
+              variants={product.variants}
+              optionLabel="Variant"
+            />
             <Button asChild size="lg" className="mt-4">
               <a
                 href={`mailto:sales@example.com?subject=Inquiry: ${encodeURIComponent(product.name)}`}

@@ -175,16 +175,3 @@ export function ImageGallery({
     </div>
   );
 }
-
-{
-  /* <div className="relative w-full h-[400px]">
-  <Image
-    src="https://s3-us-west-1.amazonaws.com/assets.printverse/pro_img/20360/20360-1.5-CeramicShotGlass-White-i.png"
-    alt="Ceramic Shot Glass"
-    fill
-    priority
-    sizes="(max-width: 768px) 100vw, 500px"
-    className="object-contain"
-  />
-</div> */
-}

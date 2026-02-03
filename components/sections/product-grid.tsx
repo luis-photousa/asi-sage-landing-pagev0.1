@@ -1,16 +1,22 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Package } from "lucide-react";
 import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { CURRENCY, LOCALE } from "@/lib/constants";
-import type { MockProduct } from "@/lib/mock-data";
-import { mockProducts } from "@/lib/mock-data";
+import type { Product } from "@/lib/product-types";
 import { formatMoney } from "@/lib/money";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { YnsLink } from "../yns-link";
 
 type ProductGridProps = {
   title?: string;
   description?: string;
-  products?: MockProduct[];
+  products?: Product[];
   limit?: number;
   showViewAll?: boolean;
   viewAllHref?: string;
@@ -33,8 +39,34 @@ export async function ProductGrid({
   "use cache";
   cacheLife("minutes");
 
-  const source = products ?? mockProducts;
-  const displayProducts = source.slice(0, limit);
+  const displayProducts = (products ?? []).slice(0, limit);
+
+  if (displayProducts.length === 0) {
+    return (
+      <section
+        id="products"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24"
+      >
+        <div className="mb-12">
+          <h2 className="text-2xl sm:text-3xl font-medium text-foreground">
+            {title}
+          </h2>
+          <p className="mt-2 text-muted-foreground">{description}</p>
+        </div>
+        <Empty className="border border-border rounded-2xl py-16">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Package className="size-6" />
+            </EmptyMedia>
+            <EmptyTitle>No products yet</EmptyTitle>
+            <EmptyDescription>
+              Products will appear here once the pricelist is loaded.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -61,7 +93,7 @@ export async function ProductGrid({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {displayProducts.map((product) => {
+        {displayProducts.map((product, index) => {
           const variants = "variants" in product ? product.variants : null;
           const firstVariantPrice = variants?.[0]
             ? BigInt(variants[0].price)
@@ -118,6 +150,7 @@ export async function ProductGrid({
                     alt={product.name}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    priority={index < 6}
                     className="object-cover transition-opacity duration-500 group-hover:opacity-0"
                   />
                 )}

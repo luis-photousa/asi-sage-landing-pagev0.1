@@ -1,11 +1,27 @@
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { YnsLink } from "../yns-link";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-secondary/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-20 sm:py-24 lg:py-32">
+    <section className="relative w-full overflow-hidden aspect-4/3 min-h-[50vh] sm:aspect-2/1 sm:min-h-[45vh] lg:aspect-21/9 lg:min-h-[55vh]">
+      {/* Background image — proportional frame prevents skew on any screen */}
+      <Image
+        src="/hero-bg.png"
+        alt=""
+        fill
+        priority
+        className="object-cover object-center"
+        sizes="100vw"
+      />
+      {/* Overlay for text readability */}
+      <div
+        className="absolute inset-0 bg-background/70 pointer-events-none"
+        aria-hidden
+      />
+      {/* Content */}
+      <div className="absolute inset-0 z-10 flex items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="max-w-2xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-foreground">
               Premium wholesale blanks
@@ -28,7 +44,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1/3 h-full bg-linear-to-l from-secondary/40 to-transparent pointer-events-none hidden lg:block" />
     </section>
   );
 }

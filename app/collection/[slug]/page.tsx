@@ -4,13 +4,13 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { SiteBreadcrumbs } from "@/components/breadcrumbs";
 import { ProductGrid } from "@/components/sections/product-grid";
-import type { MockCollectionDetail } from "@/lib/mock-data";
-import { getMockCollectionBySlug } from "@/lib/mock-data";
+import type { PricelistCollectionDetail } from "@/lib/pricelist";
+import { getCollectionBySlugFromPricelist } from "@/lib/pricelist";
 
 function CollectionHeader({
   collection,
 }: {
-  collection: MockCollectionDetail;
+  collection: PricelistCollectionDetail;
 }) {
   return (
     <section className="relative overflow-hidden bg-secondary/30">
@@ -67,7 +67,7 @@ function ProductGridSkeleton() {
 function CollectionProducts({
   collection,
 }: {
-  collection: MockCollectionDetail;
+  collection: PricelistCollectionDetail;
 }) {
   const products = collection.productCollections.map((pc) => pc.product);
 
@@ -88,7 +88,7 @@ export default async function CollectionPage(
   cacheLife("minutes");
 
   const { slug } = await props.params;
-  const collection = getMockCollectionBySlug(slug);
+  const collection = await getCollectionBySlugFromPricelist(slug);
 
   if (!collection) {
     notFound();
@@ -96,15 +96,17 @@ export default async function CollectionPage(
 
   return (
     <main>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <SiteBreadcrumbs
           items={[{ label: "Home", href: "/" }, { label: collection.name }]}
         />
       </div>
-      <CollectionHeader collection={collection} />
-      <Suspense fallback={<ProductGridSkeleton />}>
-        <CollectionProducts collection={collection} />
-      </Suspense>
+      <div className="border-t border-border">
+        <CollectionHeader collection={collection} />
+        <Suspense fallback={<ProductGridSkeleton />}>
+          <CollectionProducts collection={collection} />
+        </Suspense>
+      </div>
     </main>
   );
 }

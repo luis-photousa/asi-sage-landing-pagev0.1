@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { FeaturedCategories } from "@/components/sections/featured-categories";
 import { Hero } from "@/components/sections/hero";
+import { ValueProps } from "@/components/sections/value-props";
 import { ProductGrid } from "@/components/sections/product-grid";
 import { getProductsFromPricelist } from "@/lib/pricelist";
 
@@ -34,7 +34,7 @@ export default async function Home() {
   return (
     <main>
       <Hero />
-      <FeaturedCategories />
+      <ValueProps />
       <Suspense fallback={<ProductGridSkeleton />}>
         <ProductGrid
           title="Featured products"

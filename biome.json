@@ -14,7 +14,6 @@
 			"!**/bun.lockb",
 			"!**/vercel.json",
 			"!**/components/ui",
-			"!**/hooks/use-mobile.ts",
 			"!**/*.css"
 		]
 	},
@@ -129,7 +128,6 @@
 		{
 			"includes": [
 				"**/*.d.ts",
-				"**/proxy.ts",
 				"**/next.config.{mjs,ts}",
 				"**/postcss.config.mjs",
 				"**/tailwind.config.ts",

@@ -6,6 +6,7 @@ import { Phone } from "lucide-react";
 import { Suspense } from "react";
 import { Footer } from "@/app/footer";
 import { Navbar } from "@/app/navbar";
+import { MobileNav } from "@/components/mobile-nav";
 import { YnsLink } from "@/components/yns-link";
 
 const geistSans = Geist({
@@ -38,7 +39,7 @@ export default function RootLayout({
             <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-4 sm:gap-8">
                     <YnsLink
                       prefetch={"eager"}
                       href="/"
@@ -48,11 +49,14 @@ export default function RootLayout({
                     </YnsLink>
                     <Navbar />
                   </div>
-                  <div className="flex items-center gap-2 bg-secondary/50 rounded-lg px-4 py-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Call us 000-000-0000
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <div className="hidden sm:flex items-center gap-2 bg-secondary/50 rounded-lg px-4 py-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Call us 000-000-0000
+                      </p>
+                    </div>
+                    <MobileNav />
                   </div>
                 </div>
               </div>
