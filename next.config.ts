@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 	reactCompiler: true,
+	async redirects() {
+		return [
+			{
+				source: "/collection/:slug",
+				destination: "/products?category=:slug",
+				permanent: true,
+			},
+		];
+	},
 	cacheComponents: true,
 	experimental: {
 		typedEnv: true,

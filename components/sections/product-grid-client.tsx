@@ -1,9 +1,11 @@
-import { ArrowRight, Package } from "lucide-react";
-import { cacheLife } from "next/cache";
+"use client";
+
 import Image from "next/image";
+import { Package } from "lucide-react";
 import { CURRENCY, LOCALE } from "@/lib/constants";
 import type { Product } from "@/lib/product-types";
 import { formatMoney } from "@/lib/money";
+import { getColorFromVariantLabel } from "@/lib/variant-attributes";
 import {
   Empty,
   EmptyDescription,
@@ -11,37 +13,27 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { YnsLink } from "../yns-link";
+import { YnsLink } from "@/components/yns-link";
 
-type ProductGridProps = {
-  title?: string;
-  description?: string;
-  products?: Product[];
-  limit?: number;
-  showViewAll?: boolean;
-  viewAllHref?: string;
-  /** Optional vendor/brand line on each card (e.g. "ORCA Coatings") */
+type ProductGridClientProps = {
+  title: string;
+  description: string;
+  products: Product[];
   vendorLabel?: string;
-  /** Show Photo USA–style pricing (unit cost + Unit price / per) */
   showUnitPriceStyle?: boolean;
+  /** When set, card images prefer the variant that matches this color (e.g. show red mug when filtering by red). */
+  selectedColors?: string[];
 };
 
-export async function ProductGrid({
-  title = "Featured Products",
-  description = "Handpicked favorites from our collection",
+export function ProductGridClient({
+  title,
+  description,
   products,
-  limit = 6,
-  showViewAll = true,
-  viewAllHref = "/products",
   vendorLabel,
   showUnitPriceStyle = false,
-}: ProductGridProps) {
-  "use cache";
-  cacheLife("minutes");
-
-  const displayProducts = (products ?? []).slice(0, limit);
-
-  if (displayProducts.length === 0) {
+  selectedColors = [],
+}: ProductGridClientProps) {
+  if (products.length === 0) {
     return (
       <section
         id="products"
@@ -58,9 +50,9 @@ export async function ProductGrid({
             <EmptyMedia variant="icon">
               <Package className="size-6" />
             </EmptyMedia>
-            <EmptyTitle>No products yet</EmptyTitle>
+            <EmptyTitle>No matching products</EmptyTitle>
             <EmptyDescription>
-              Products will appear here once the pricelist is loaded.
+              Try a different search or browse all categories.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -73,28 +65,16 @@ export async function ProductGrid({
       id="products"
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24"
     >
-      <div className="flex items-end justify-between mb-12">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-medium text-foreground">
-            {title}
-          </h2>
-          <p className="mt-2 text-muted-foreground">{description}</p>
-        </div>
-        {showViewAll && (
-          <YnsLink
-            prefetch={"eager"}
-            href={viewAllHref}
-            className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            View all
-            <ArrowRight className="h-4 w-4" />
-          </YnsLink>
-        )}
+      <div className="mb-12">
+        <h2 className="text-2xl sm:text-3xl font-medium text-foreground">
+          {title}
+        </h2>
+        <p className="mt-2 text-muted-foreground">{description}</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {displayProducts.map((product, index) => {
-          const variants = "variants" in product ? product.variants : null;
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        {products.map((product, index) => {
+          const variants = product.variants ?? null;
           const firstVariantPrice = variants?.[0]
             ? BigInt(variants[0].price)
             : null;
@@ -133,12 +113,26 @@ export async function ProductGrid({
               ?.flatMap((v) => v.images ?? [])
               .filter((img) => !(product.images ?? []).includes(img)) ?? []),
           ];
-          const primaryImage = allImages[0];
-          const secondaryImage = allImages[1];
+
+          const matchingVariant =
+            selectedColors.length > 0 &&
+            variants?.find((v) => {
+              const c = getColorFromVariantLabel(v.label ?? "");
+              return c != null && selectedColors.includes(c);
+            });
+
+          const primaryImage =
+            matchingVariant?.images?.[0] ?? product.images?.[0] ?? allImages[0];
+          const secondaryCandidate =
+            matchingVariant?.images?.[1] ?? product.images?.[1] ?? allImages[1];
+          const secondaryImage =
+            secondaryCandidate && secondaryCandidate !== primaryImage
+              ? secondaryCandidate
+              : allImages.find((img) => img !== primaryImage);
 
           return (
             <YnsLink
-              prefetch={"eager"}
+              prefetch={false}
               key={product.id}
               href={`/product/${product.slug}`}
               className="group"
@@ -194,19 +188,6 @@ export async function ProductGrid({
           );
         })}
       </div>
-
-      {showViewAll && (
-        <div className="mt-12 text-center sm:hidden">
-          <YnsLink
-            prefetch={"eager"}
-            href={viewAllHref}
-            className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            View all products
-            <ArrowRight className="h-4 w-4" />
-          </YnsLink>
-        </div>
-      )}
     </section>
   );
 }

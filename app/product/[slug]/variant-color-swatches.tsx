@@ -7,6 +7,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  getColorFromVariantLabel,
+  getColorDisplayLabel as getDisplayLabelFromLib,
+  SWATCH_COLORS,
+} from "@/lib/variant-attributes";
 import { cn } from "@/lib/utils";
 
 type VariantValue = {
@@ -23,21 +28,6 @@ type Variant = {
 type VariantColorSwatchesProps = {
   variants: Variant[];
   optionLabel?: string;
-};
-
-/** Hex values for swatch backgrounds by color name (lowercase). */
-const SWATCH_COLORS: Record<string, string> = {
-  maroon: "#782f40",
-  red: "#ba0c2f",
-  pink: "#e4a9bb",
-  orange: "#dc4405",
-  yellow: "#d9c756",
-  "light green": "#a4d65e",
-  green: "#00594c",
-  "light blue": "#02a3e0",
-  "cambridge blue": "#307fe2",
-  blue: "#250e62",
-  black: "#101820",
 };
 
 function getHexForDisplayLabel(displayLabel: string): string | null {
@@ -62,48 +52,10 @@ function getColorOption(
   };
 }
 
-/**
- * Derive a short display label from variant value (e.g. "11 oz. two-tone blue mug" → "Blue").
- * Strips common product suffixes (mug, glass, etc.), then takes last 1–2 words for color (e.g. "Cambridge Blue").
- */
+/** Display label for variant value (e.g. "11 oz. two-tone blue mug" → "Blue"). Uses shared color parsing. */
 function getDisplayLabel(value: string): string {
-  const v = value.trim();
-  if (!v) return "";
-  const lower = v.toLowerCase();
-  const suffixes = [
-    " mug",
-    " mugs",
-    " glass",
-    " glasses",
-    " stein",
-    " tile",
-    " tiles",
-    " sleeve",
-    " pad",
-    " pads",
-    " box",
-    " ornament",
-    " mirror",
-    " notebook",
-    " enamel",
-  ];
-  let before = v;
-  for (const suf of suffixes) {
-    if (lower.endsWith(suf)) {
-      before = v.slice(0, v.length - suf.length).trim();
-      break;
-    }
-  }
-  const parts = before.split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return v.slice(0, 12);
-  const twoWord = /\b(light|dark|cambridge)\s+\w+$/i.exec(before);
-  if (twoWord) {
-    const a = twoWord[1];
-    const b = parts[parts.length - 1];
-    return `${a.charAt(0).toUpperCase()}${a.slice(1).toLowerCase()} ${b.charAt(0).toUpperCase()}${b.slice(1).toLowerCase()}`;
-  }
-  const last = parts[parts.length - 1];
-  return last ? last.replace(/^./, (c) => c.toUpperCase()) : v.slice(0, 12);
+  const normalized = getColorFromVariantLabel(value);
+  return normalized ? getDisplayLabelFromLib(normalized) : value.slice(0, 12);
 }
 
 export function VariantColorSwatches({

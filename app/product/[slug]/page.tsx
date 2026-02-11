@@ -102,18 +102,8 @@ const ProductDetailsContent = async ({
         <SiteBreadcrumbs
           items={[
             { label: "Home", href: "/" },
-            ...(product.collectionName && product.collectionSlug
-              ? [
-                  {
-                    label: product.collectionName,
-                    href: `/collection/${product.collectionSlug}`,
-                  },
-                  { label: product.name },
-                ]
-              : [
-                  { label: "Products", href: "/products" },
-                  { label: product.name },
-                ]),
+            { label: "Products", href: "/products" },
+            { label: product.name },
           ]}
         />
       </div>

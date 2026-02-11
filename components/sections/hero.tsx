@@ -12,7 +12,7 @@ export function Hero() {
         fill
         priority
         className="object-cover object-center"
-        sizes="100vw"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
       />
       {/* Overlay for text readability */}
       <div

@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Your Next Store",
+  title: "Imprint Photomugs",
   description: "Your next e-commerce store",
 };
 
@@ -45,7 +45,7 @@ export default function RootLayout({
                       href="/"
                       className="text-xl font-bold"
                     >
-                      Imprints Photomugs
+                      Imprint Photomugs
                     </YnsLink>
                     <Navbar />
                   </div>

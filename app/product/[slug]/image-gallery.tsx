@@ -165,7 +165,8 @@ export function ImageGallery({
                 src={image}
                 alt={`${productName} thumbnail ${index + 1}`}
                 fill
-                sizes="(max-width: 768px) 100vw, 500px"
+                sizes="80px"
+                loading="lazy"
                 className="object-cover"
               />
             </button>

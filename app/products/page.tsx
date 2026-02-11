@@ -1,15 +1,12 @@
 import { Suspense } from "react";
 import { SiteBreadcrumbs } from "@/components/breadcrumbs";
-import { ProductsSortSelect } from "@/components/products-sort-select";
 import { isValidSort, type SortValue } from "@/lib/products-sort";
-import { ProductGrid } from "@/components/sections/product-grid";
+import { ProductsWithSearch } from "@/app/products/products-with-search";
 import {
   getCollectionsFromPricelist,
   getProductsFromPricelist,
 } from "@/lib/pricelist";
 import type { Product } from "@/lib/product-types";
-import { YnsLink } from "@/components/yns-link";
-import { cn } from "@/lib/utils";
 
 function getMinPriceMinor(product: Product): number {
   const fromTiers = (product.tiers ?? []).map((t) => Number(t.price));
@@ -79,86 +76,14 @@ async function ProductsContent({
       : allProducts;
 
   const products = sortProducts(filtered, sort);
-  const count = products.length;
-  const activeCategory = collections.find((c) => c.slug === categorySlug);
 
   return (
-    <>
-      {/* Toolbar: category filter + sort — contained, modern */}
-      <div className="max-w-7xl mx-auto px-4 mt-3 sm:px-6 lg:px-8 mb-8 sm:mb-10">
-        <div className="rounded-2xl border border-border bg-muted/20 p-4 sm:p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-            {collections.length > 0 && (
-              <div className="min-w-0 flex-1">
-                <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Category
-                </p>
-                <div
-                  className={cn(
-                    "flex gap-2 sm:gap-2.5",
-                    "overflow-x-auto pb-1 -mx-0.5 px-0.5 sm:mx-0 sm:px-0 sm:overflow-visible sm:flex-wrap",
-                    "[scrollbar-width:thin] [&::-webkit-scrollbar]:h-1",
-                  )}
-                >
-                  <YnsLink
-                    prefetch={"eager"}
-                    href="/products"
-                    className={cn(
-                      "shrink-0 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
-                      categorySlug == null
-                        ? "bg-foreground text-background shadow-sm"
-                        : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground",
-                    )}
-                  >
-                    All
-                  </YnsLink>
-                  {collections.map((collection) => {
-                    const isActive = categorySlug === collection.slug;
-                    return (
-                      <YnsLink
-                        prefetch={"eager"}
-                        key={collection.id}
-                        href={`/products?category=${encodeURIComponent(collection.slug)}`}
-                        className={cn(
-                          "shrink-0 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
-                          isActive
-                            ? "bg-foreground text-background shadow-sm"
-                            : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground",
-                        )}
-                      >
-                        {collection.name}
-                      </YnsLink>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            <div className="shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Sort
-              </p>
-              <Suspense
-                fallback={
-                  <div className="h-9 w-[180px] rounded-lg border border-input bg-muted/30 animate-pulse" />
-                }
-              >
-                <ProductsSortSelect value={sort} />
-              </Suspense>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <ProductGrid
-        title={activeCategory ? activeCategory.name : "All products"}
-        description={count === 1 ? "1 product" : `${count} products`}
-        products={products}
-        limit={count}
-        showViewAll={false}
-        vendorLabel="Your Brand"
-        showUnitPriceStyle
-      />
-    </>
+    <ProductsWithSearch
+      products={products}
+      collections={collections}
+      categorySlug={categorySlug}
+      sort={sort}
+    />
   );
 }
 

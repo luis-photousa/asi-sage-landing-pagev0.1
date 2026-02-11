@@ -358,7 +358,7 @@ export type PricelistCollection = { id: string; slug: string; name: string };
 
 /**
  * Return unique categories from the pricelist (from Category column in enriched sheet).
- * Use for nav and collection pages when pricelist has categories.
+ * Use for products page category filter and footer.
  */
 export async function getCollectionsFromPricelist(): Promise<PricelistCollection[]> {
 	const products = await getProductsFromPricelist();
@@ -374,34 +374,4 @@ export async function getCollectionsFromPricelist(): Promise<PricelistCollection
 		slug,
 		name,
 	}));
-}
-
-export type PricelistCollectionDetail = {
-	id: string;
-	slug: string;
-	name: string;
-	description: string | null;
-	image: string | null;
-	productCollections: { product: Product }[];
-};
-
-/**
- * Return collection detail for a slug when the pricelist has that category; else null.
- */
-export async function getCollectionBySlugFromPricelist(slug: string): Promise<PricelistCollectionDetail | null> {
-	const [products, collections] = await Promise.all([
-		getProductsFromPricelist(),
-		getCollectionsFromPricelist(),
-	]);
-	const col = collections.find((c) => c.slug === slug);
-	if (!col) return null;
-	const productsInCollection = products.filter((p) => p.collectionSlug === slug);
-	return {
-		id: col.id,
-		slug: col.slug,
-		name: col.name,
-		description: null,
-		image: null,
-		productCollections: productsInCollection.map((product) => ({ product })),
-	};
 }

@@ -11,7 +11,7 @@ const quickLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
-async function FooterCollections() {
+async function FooterCategories() {
   "use cache";
   cacheLife("hours");
 
@@ -25,8 +25,8 @@ async function FooterCollections() {
       {collections.map((collection) => (
         <YnsLink
           key={collection.id}
-          prefetch={"eager"}
-          href={`/collection/${collection.slug}`}
+          prefetch="eager"
+          href={`/products?category=${encodeURIComponent(collection.slug)}`}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
         >
           {collection.name}
@@ -72,13 +72,13 @@ export function Footer() {
             ))}
           </nav>
 
-          {/* Collections */}
+          {/* Categories */}
           <div className="mt-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-              Collections
+              Categories
             </p>
             <Suspense fallback={<div className="h-6" />}>
-              <FooterCollections />
+              <FooterCategories />
             </Suspense>
           </div>
         </div>
