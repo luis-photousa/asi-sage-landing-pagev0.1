@@ -115,11 +115,12 @@ export function ProductGridClient({
           ];
 
           const matchingVariant =
-            selectedColors.length > 0 &&
-            variants?.find((v) => {
-              const c = getColorFromVariantLabel(v.label ?? "");
-              return c != null && selectedColors.includes(c);
-            });
+            selectedColors.length > 0
+              ? variants?.find((v) => {
+                  const c = getColorFromVariantLabel(v.label ?? "");
+                  return c != null && selectedColors.includes(c);
+                })
+              : undefined;
 
           const primaryImage =
             matchingVariant?.images?.[0] ?? product.images?.[0] ?? allImages[0];
